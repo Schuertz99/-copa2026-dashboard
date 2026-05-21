@@ -1,0 +1,1704 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard Copa 2026 Mobile</title>
+<style>
+:root {
+  --bg:#07111f; --card:#0d1b2e; --card2:#10253f; --line:#214160; --txt:#eaf2ff;
+  --muted:#9eb3cf; --accent:#35d07f; --warn:#ffd166; --bad:#ff6b6b; --input:#07182a;
+}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#06101d,#091a2f 45%,#07111f);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+header{position:sticky;top:0;z-index:5;background:rgba(7,17,31,.96);border-bottom:1px solid var(--line);backdrop-filter:blur(10px)}
+.wrap{max-width:1280px;margin:auto;padding:14px}
+h1{font-size:22px;margin:0 0 4px} h2{font-size:17px;margin:0} h3{margin:0}
+.sub{color:var(--muted);font-size:13px;line-height:1.35}
+.tabs,.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+button{border:1px solid var(--line);background:var(--card2);color:var(--txt);padding:9px 12px;border-radius:999px;font-weight:700}
+button.active{background:var(--accent);color:#04150b;border-color:transparent}
+button.danger{background:#3a1420;border-color:#743047}
+.notice{border:1px solid rgba(255,209,102,.35);background:rgba(255,209,102,.08);color:#ffe8a5;border-radius:14px;padding:10px;margin:12px 0;font-size:13px}
+.ok{border-color:rgba(53,208,127,.35);background:rgba(53,208,127,.08);color:#bdffd8}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
+.card{background:linear-gradient(180deg,var(--card),#0a1729);border:1px solid var(--line);border-radius:16px;padding:12px;box-shadow:0 10px 28px rgba(0,0,0,.25)}
+.group-card{grid-column:span 4}
+.full{grid-column:span 12}
+@media(max-width:980px){.group-card{grid-column:span 12}}
+.card-head{border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:8px;display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.card-head span{font-size:12px;color:var(--muted);text-align:right}
+.match{display:grid;grid-template-columns:1fr 48px 16px 48px 1fr;gap:7px;align-items:center;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035);border-radius:12px;padding:8px;margin:7px 0}
+.team{font-weight:800;font-size:13px} .home{text-align:right} .away{text-align:left} .versus{color:var(--muted);text-align:center}
+input,textarea{background:var(--input);border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:8px;outline:none}
+input[type=number]{width:48px;text-align:center}
+table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+th,td{border-bottom:1px solid rgba(255,255,255,.08);padding:6px 4px;text-align:center}
+th:first-child,td:first-child{text-align:left}
+tr.qual td:first-child{color:var(--accent);font-weight:900}
+tr.third td:first-child{color:var(--warn);font-weight:900}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0}
+.metric{border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);border-radius:14px;padding:10px}
+.metric span{display:block;color:var(--muted);font-size:12px} .metric b{font-size:22px}
+@media(max-width:760px){.metrics{grid-template-columns:repeat(2,1fr)} .match{grid-template-columns:1fr 42px 12px 42px 1fr} input[type=number]{width:42px}}
+.hidden{display:none}
+.ko-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:1100px){.ko-grid{grid-template-columns:1fr}}
+.round{background:linear-gradient(180deg,var(--card),#0a1729);border:1px solid var(--line);border-radius:16px;padding:12px}
+.ko-match{border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035);border-radius:13px;margin:10px 0;padding:10px}
+.ko-title{color:var(--muted);font-size:12px;margin-bottom:5px}
+.ko-row{display:grid;grid-template-columns:1fr 52px;gap:8px;margin:5px 0}
+.ko-team{width:100%}
+.pens{display:grid;grid-template-columns:1fr 48px 48px;gap:7px;align-items:center;margin-top:8px;color:var(--muted);font-size:12px}
+.winner{font-size:12px;margin-top:7px;color:var(--muted)} .winner.oktxt{color:var(--accent);font-weight:900}
+textarea{width:100%;min-height:160px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px}
+.event-card{border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035);border-radius:14px;margin:10px 0;padding:12px}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>Dashboard Copa 2026 — versão iPhone/mobile</h1>
+    <div class="sub">Os jogos já estão no HTML. Se o JavaScript não rodar no visualizador do iPhone, os campos ainda aparecem.</div>
+    <div class="tabs">
+      <button class="active" data-tab="sim">Simulação</button>
+      <button data-tab="ko">Mata-mata</button>
+      <button data-tab="real">Dados reais</button>
+      <button data-tab="help">Ajuda iPhone</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+<section id="tab-sim">
+  <div class="notice">Digite os placares da fase de grupos. A tabela recalcula automaticamente quando o JavaScript roda. Se abrir só como prévia de arquivo no iPhone, os campos aparecem, mas talvez não salve/recalcule até abrir no Safari.</div>
+  <div class="metrics">
+    <div class="metric"><span>Jogos da fase de grupos</span><b>72</b></div>
+    <div class="metric"><span>Placares preenchidos</span><b id="filled">0</b></div>
+    <div class="metric"><span>Classificados diretos</span><b>24</b></div>
+    <div class="metric"><span>Melhores terceiros</span><b>8</b></div>
+  </div>
+  <div class="grid">
+    
+      <article class="card group-card" id="group-A">
+        <div class="card-head">
+          <h2>Grupo A</h2>
+          <span>México • África do Sul • Coreia do Sul • Tchéquia</span>
+        </div>
+        <div class="matches">
+          
+          <div class="match" data-group="A" data-match="0">
+            <div class="team home">México</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar México">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar África do Sul">
+            <div class="team away">África do Sul</div>
+          </div>
+        
+          <div class="match" data-group="A" data-match="1">
+            <div class="team home">Coreia do Sul</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Coreia do Sul">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Tchéquia">
+            <div class="team away">Tchéquia</div>
+          </div>
+        
+          <div class="match" data-group="A" data-match="2">
+            <div class="team home">México</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar México">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Coreia do Sul">
+            <div class="team away">Coreia do Sul</div>
+          </div>
+        
+          <div class="match" data-group="A" data-match="3">
+            <div class="team home">Tchéquia</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Tchéquia">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar África do Sul">
+            <div class="team away">África do Sul</div>
+          </div>
+        
+          <div class="match" data-group="A" data-match="4">
+            <div class="team home">Tchéquia</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Tchéquia">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar México">
+            <div class="team away">México</div>
+          </div>
+        
+          <div class="match" data-group="A" data-match="5">
+            <div class="team home">África do Sul</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar África do Sul">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Coreia do Sul">
+            <div class="team away">Coreia do Sul</div>
+          </div>
+        
+        </div>
+        <div class="table-wrap" id="table-A">
+          <table>
+            <thead>
+              <tr><th>Seleção</th><th>J</th><th>V</th><th>E</th><th>D</th><th>GP</th><th>GC</th><th>SG</th><th>Pts</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1. México</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr><tr><td>2. África do Sul</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr><tr><td>3. Coreia do Sul</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr><tr><td>4. Tchéquia</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    
+      <article class="card group-card" id="group-B">
+        <div class="card-head">
+          <h2>Grupo B</h2>
+          <span>Canadá • Bósnia e Herzegovina • Catar • Suíça</span>
+        </div>
+        <div class="matches">
+          
+          <div class="match" data-group="B" data-match="0">
+            <div class="team home">Canadá</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Canadá">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Bósnia e Herzegovina">
+            <div class="team away">Bósnia e Herzegovina</div>
+          </div>
+        
+          <div class="match" data-group="B" data-match="1">
+            <div class="team home">Catar</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Catar">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Suíça">
+            <div class="team away">Suíça</div>
+          </div>
+        
+          <div class="match" data-group="B" data-match="2">
+            <div class="team home">Canadá</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Canadá">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Catar">
+            <div class="team away">Catar</div>
+          </div>
+        
+          <div class="match" data-group="B" data-match="3">
+            <div class="team home">Suíça</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Suíça">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Bósnia e Herzegovina">
+            <div class="team away">Bósnia e Herzegovina</div>
+          </div>
+        
+          <div class="match" data-group="B" data-match="4">
+            <div class="team home">Suíça</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Suíça">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Canadá">
+            <div class="team away">Canadá</div>
+          </div>
+        
+          <div class="match" data-group="B" data-match="5">
+            <div class="team home">Bósnia e Herzegovina</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Bósnia e Herzegovina">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Catar">
+            <div class="team away">Catar</div>
+          </div>
+        
+        </div>
+        <div class="table-wrap" id="table-B">
+          <table>
+            <thead>
+              <tr><th>Seleção</th><th>J</th><th>V</th><th>E</th><th>D</th><th>GP</th><th>GC</th><th>SG</th><th>Pts</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1. Canadá</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr><tr><td>2. Bósnia e Herzegovina</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr><tr><td>3. Catar</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr><tr><td>4. Suíça</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    
+      <article class="card group-card" id="group-C">
+        <div class="card-head">
+          <h2>Grupo C</h2>
+          <span>Brasil • Marrocos • Haiti • Escócia</span>
+        </div>
+        <div class="matches">
+          
+          <div class="match" data-group="C" data-match="0">
+            <div class="team home">Brasil</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Brasil">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Marrocos">
+            <div class="team away">Marrocos</div>
+          </div>
+        
+          <div class="match" data-group="C" data-match="1">
+            <div class="team home">Haiti</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Haiti">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Escócia">
+            <div class="team away">Escócia</div>
+          </div>
+        
+          <div class="match" data-group="C" data-match="2">
+            <div class="team home">Brasil</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Brasil">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Haiti">
+            <div class="team away">Haiti</div>
+          </div>
+        
+          <div class="match" data-group="C" data-match="3">
+            <div class="team home">Escócia</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Escócia">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Marrocos">
+            <div class="team away">Marrocos</div>
+          </div>
+        
+          <div class="match" data-group="C" data-match="4">
+            <div class="team home">Escócia</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Escócia">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Brasil">
+            <div class="team away">Brasil</div>
+          </div>
+        
+          <div class="match" data-group="C" data-match="5">
+            <div class="team home">Marrocos</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Marrocos">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Haiti">
+            <div class="team away">Haiti</div>
+          </div>
+        
+        </div>
+        <div class="table-wrap" id="table-C">
+          <table>
+            <thead>
+              <tr><th>Seleção</th><th>J</th><th>V</th><th>E</th><th>D</th><th>GP</th><th>GC</th><th>SG</th><th>Pts</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1. Brasil</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr><tr><td>2. Marrocos</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr><tr><td>3. Haiti</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr><tr><td>4. Escócia</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    
+      <article class="card group-card" id="group-D">
+        <div class="card-head">
+          <h2>Grupo D</h2>
+          <span>Estados Unidos • Paraguai • Austrália • Turquia</span>
+        </div>
+        <div class="matches">
+          
+          <div class="match" data-group="D" data-match="0">
+            <div class="team home">Estados Unidos</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Estados Unidos">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Paraguai">
+            <div class="team away">Paraguai</div>
+          </div>
+        
+          <div class="match" data-group="D" data-match="1">
+            <div class="team home">Austrália</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Austrália">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Turquia">
+            <div class="team away">Turquia</div>
+          </div>
+        
+          <div class="match" data-group="D" data-match="2">
+            <div class="team home">Estados Unidos</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Estados Unidos">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Austrália">
+            <div class="team away">Austrália</div>
+          </div>
+        
+          <div class="match" data-group="D" data-match="3">
+            <div class="team home">Turquia</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Turquia">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Paraguai">
+            <div class="team away">Paraguai</div>
+          </div>
+        
+          <div class="match" data-group="D" data-match="4">
+            <div class="team home">Turquia</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Turquia">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Estados Unidos">
+            <div class="team away">Estados Unidos</div>
+          </div>
+        
+          <div class="match" data-group="D" data-match="5">
+            <div class="team home">Paraguai</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Paraguai">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Austrália">
+            <div class="team away">Austrália</div>
+          </div>
+        
+        </div>
+        <div class="table-wrap" id="table-D">
+          <table>
+            <thead>
+              <tr><th>Seleção</th><th>J</th><th>V</th><th>E</th><th>D</th><th>GP</th><th>GC</th><th>SG</th><th>Pts</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1. Estados Unidos</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr><tr><td>2. Paraguai</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr><tr><td>3. Austrália</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr><tr><td>4. Turquia</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    
+      <article class="card group-card" id="group-E">
+        <div class="card-head">
+          <h2>Grupo E</h2>
+          <span>Alemanha • Curaçao • Costa do Marfim • Equador</span>
+        </div>
+        <div class="matches">
+          
+          <div class="match" data-group="E" data-match="0">
+            <div class="team home">Alemanha</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Alemanha">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Curaçao">
+            <div class="team away">Curaçao</div>
+          </div>
+        
+          <div class="match" data-group="E" data-match="1">
+            <div class="team home">Costa do Marfim</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Costa do Marfim">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Equador">
+            <div class="team away">Equador</div>
+          </div>
+        
+          <div class="match" data-group="E" data-match="2">
+            <div class="team home">Alemanha</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Alemanha">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Costa do Marfim">
+            <div class="team away">Costa do Marfim</div>
+          </div>
+        
+          <div class="match" data-group="E" data-match="3">
+            <div class="team home">Equador</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Equador">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Curaçao">
+            <div class="team away">Curaçao</div>
+          </div>
+        
+          <div class="match" data-group="E" data-match="4">
+            <div class="team home">Equador</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Equador">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Alemanha">
+            <div class="team away">Alemanha</div>
+          </div>
+        
+          <div class="match" data-group="E" data-match="5">
+            <div class="team home">Curaçao</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Curaçao">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Costa do Marfim">
+            <div class="team away">Costa do Marfim</div>
+          </div>
+        
+        </div>
+        <div class="table-wrap" id="table-E">
+          <table>
+            <thead>
+              <tr><th>Seleção</th><th>J</th><th>V</th><th>E</th><th>D</th><th>GP</th><th>GC</th><th>SG</th><th>Pts</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1. Alemanha</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr><tr><td>2. Curaçao</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr><tr><td>3. Costa do Marfim</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr><tr><td>4. Equador</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    
+      <article class="card group-card" id="group-F">
+        <div class="card-head">
+          <h2>Grupo F</h2>
+          <span>Países Baixos • Japão • Suécia • Tunísia</span>
+        </div>
+        <div class="matches">
+          
+          <div class="match" data-group="F" data-match="0">
+            <div class="team home">Países Baixos</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Países Baixos">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Japão">
+            <div class="team away">Japão</div>
+          </div>
+        
+          <div class="match" data-group="F" data-match="1">
+            <div class="team home">Suécia</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Suécia">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Tunísia">
+            <div class="team away">Tunísia</div>
+          </div>
+        
+          <div class="match" data-group="F" data-match="2">
+            <div class="team home">Países Baixos</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Países Baixos">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Suécia">
+            <div class="team away">Suécia</div>
+          </div>
+        
+          <div class="match" data-group="F" data-match="3">
+            <div class="team home">Tunísia</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Tunísia">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Japão">
+            <div class="team away">Japão</div>
+          </div>
+        
+          <div class="match" data-group="F" data-match="4">
+            <div class="team home">Tunísia</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Tunísia">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Países Baixos">
+            <div class="team away">Países Baixos</div>
+          </div>
+        
+          <div class="match" data-group="F" data-match="5">
+            <div class="team home">Japão</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Japão">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Suécia">
+            <div class="team away">Suécia</div>
+          </div>
+        
+        </div>
+        <div class="table-wrap" id="table-F">
+          <table>
+            <thead>
+              <tr><th>Seleção</th><th>J</th><th>V</th><th>E</th><th>D</th><th>GP</th><th>GC</th><th>SG</th><th>Pts</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1. Países Baixos</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr><tr><td>2. Japão</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr><tr><td>3. Suécia</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr><tr><td>4. Tunísia</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    
+      <article class="card group-card" id="group-G">
+        <div class="card-head">
+          <h2>Grupo G</h2>
+          <span>Bélgica • Egito • Irã • Nova Zelândia</span>
+        </div>
+        <div class="matches">
+          
+          <div class="match" data-group="G" data-match="0">
+            <div class="team home">Bélgica</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Bélgica">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Egito">
+            <div class="team away">Egito</div>
+          </div>
+        
+          <div class="match" data-group="G" data-match="1">
+            <div class="team home">Irã</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Irã">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Nova Zelândia">
+            <div class="team away">Nova Zelândia</div>
+          </div>
+        
+          <div class="match" data-group="G" data-match="2">
+            <div class="team home">Bélgica</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Bélgica">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Irã">
+            <div class="team away">Irã</div>
+          </div>
+        
+          <div class="match" data-group="G" data-match="3">
+            <div class="team home">Nova Zelândia</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Nova Zelândia">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Egito">
+            <div class="team away">Egito</div>
+          </div>
+        
+          <div class="match" data-group="G" data-match="4">
+            <div class="team home">Nova Zelândia</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Nova Zelândia">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Bélgica">
+            <div class="team away">Bélgica</div>
+          </div>
+        
+          <div class="match" data-group="G" data-match="5">
+            <div class="team home">Egito</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Egito">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Irã">
+            <div class="team away">Irã</div>
+          </div>
+        
+        </div>
+        <div class="table-wrap" id="table-G">
+          <table>
+            <thead>
+              <tr><th>Seleção</th><th>J</th><th>V</th><th>E</th><th>D</th><th>GP</th><th>GC</th><th>SG</th><th>Pts</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1. Bélgica</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr><tr><td>2. Egito</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr><tr><td>3. Irã</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr><tr><td>4. Nova Zelândia</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    
+      <article class="card group-card" id="group-H">
+        <div class="card-head">
+          <h2>Grupo H</h2>
+          <span>Espanha • Cabo Verde • Arábia Saudita • Uruguai</span>
+        </div>
+        <div class="matches">
+          
+          <div class="match" data-group="H" data-match="0">
+            <div class="team home">Espanha</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Espanha">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Cabo Verde">
+            <div class="team away">Cabo Verde</div>
+          </div>
+        
+          <div class="match" data-group="H" data-match="1">
+            <div class="team home">Arábia Saudita</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Arábia Saudita">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Uruguai">
+            <div class="team away">Uruguai</div>
+          </div>
+        
+          <div class="match" data-group="H" data-match="2">
+            <div class="team home">Espanha</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Espanha">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Arábia Saudita">
+            <div class="team away">Arábia Saudita</div>
+          </div>
+        
+          <div class="match" data-group="H" data-match="3">
+            <div class="team home">Uruguai</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Uruguai">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Cabo Verde">
+            <div class="team away">Cabo Verde</div>
+          </div>
+        
+          <div class="match" data-group="H" data-match="4">
+            <div class="team home">Uruguai</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Uruguai">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Espanha">
+            <div class="team away">Espanha</div>
+          </div>
+        
+          <div class="match" data-group="H" data-match="5">
+            <div class="team home">Cabo Verde</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Cabo Verde">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Arábia Saudita">
+            <div class="team away">Arábia Saudita</div>
+          </div>
+        
+        </div>
+        <div class="table-wrap" id="table-H">
+          <table>
+            <thead>
+              <tr><th>Seleção</th><th>J</th><th>V</th><th>E</th><th>D</th><th>GP</th><th>GC</th><th>SG</th><th>Pts</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1. Espanha</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr><tr><td>2. Cabo Verde</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr><tr><td>3. Arábia Saudita</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr><tr><td>4. Uruguai</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    
+      <article class="card group-card" id="group-I">
+        <div class="card-head">
+          <h2>Grupo I</h2>
+          <span>França • Senegal • Iraque • Noruega</span>
+        </div>
+        <div class="matches">
+          
+          <div class="match" data-group="I" data-match="0">
+            <div class="team home">França</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar França">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Senegal">
+            <div class="team away">Senegal</div>
+          </div>
+        
+          <div class="match" data-group="I" data-match="1">
+            <div class="team home">Iraque</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Iraque">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Noruega">
+            <div class="team away">Noruega</div>
+          </div>
+        
+          <div class="match" data-group="I" data-match="2">
+            <div class="team home">França</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar França">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Iraque">
+            <div class="team away">Iraque</div>
+          </div>
+        
+          <div class="match" data-group="I" data-match="3">
+            <div class="team home">Noruega</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Noruega">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Senegal">
+            <div class="team away">Senegal</div>
+          </div>
+        
+          <div class="match" data-group="I" data-match="4">
+            <div class="team home">Noruega</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Noruega">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar França">
+            <div class="team away">França</div>
+          </div>
+        
+          <div class="match" data-group="I" data-match="5">
+            <div class="team home">Senegal</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Senegal">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Iraque">
+            <div class="team away">Iraque</div>
+          </div>
+        
+        </div>
+        <div class="table-wrap" id="table-I">
+          <table>
+            <thead>
+              <tr><th>Seleção</th><th>J</th><th>V</th><th>E</th><th>D</th><th>GP</th><th>GC</th><th>SG</th><th>Pts</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1. França</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr><tr><td>2. Senegal</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr><tr><td>3. Iraque</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr><tr><td>4. Noruega</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    
+      <article class="card group-card" id="group-J">
+        <div class="card-head">
+          <h2>Grupo J</h2>
+          <span>Argentina • Argélia • Áustria • Jordânia</span>
+        </div>
+        <div class="matches">
+          
+          <div class="match" data-group="J" data-match="0">
+            <div class="team home">Argentina</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Argentina">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Argélia">
+            <div class="team away">Argélia</div>
+          </div>
+        
+          <div class="match" data-group="J" data-match="1">
+            <div class="team home">Áustria</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Áustria">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Jordânia">
+            <div class="team away">Jordânia</div>
+          </div>
+        
+          <div class="match" data-group="J" data-match="2">
+            <div class="team home">Argentina</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Argentina">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Áustria">
+            <div class="team away">Áustria</div>
+          </div>
+        
+          <div class="match" data-group="J" data-match="3">
+            <div class="team home">Jordânia</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Jordânia">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Argélia">
+            <div class="team away">Argélia</div>
+          </div>
+        
+          <div class="match" data-group="J" data-match="4">
+            <div class="team home">Jordânia</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Jordânia">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Argentina">
+            <div class="team away">Argentina</div>
+          </div>
+        
+          <div class="match" data-group="J" data-match="5">
+            <div class="team home">Argélia</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Argélia">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Áustria">
+            <div class="team away">Áustria</div>
+          </div>
+        
+        </div>
+        <div class="table-wrap" id="table-J">
+          <table>
+            <thead>
+              <tr><th>Seleção</th><th>J</th><th>V</th><th>E</th><th>D</th><th>GP</th><th>GC</th><th>SG</th><th>Pts</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1. Argentina</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr><tr><td>2. Argélia</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr><tr><td>3. Áustria</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr><tr><td>4. Jordânia</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    
+      <article class="card group-card" id="group-K">
+        <div class="card-head">
+          <h2>Grupo K</h2>
+          <span>Portugal • RD Congo • Uzbequistão • Colômbia</span>
+        </div>
+        <div class="matches">
+          
+          <div class="match" data-group="K" data-match="0">
+            <div class="team home">Portugal</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Portugal">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar RD Congo">
+            <div class="team away">RD Congo</div>
+          </div>
+        
+          <div class="match" data-group="K" data-match="1">
+            <div class="team home">Uzbequistão</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Uzbequistão">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Colômbia">
+            <div class="team away">Colômbia</div>
+          </div>
+        
+          <div class="match" data-group="K" data-match="2">
+            <div class="team home">Portugal</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Portugal">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Uzbequistão">
+            <div class="team away">Uzbequistão</div>
+          </div>
+        
+          <div class="match" data-group="K" data-match="3">
+            <div class="team home">Colômbia</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Colômbia">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar RD Congo">
+            <div class="team away">RD Congo</div>
+          </div>
+        
+          <div class="match" data-group="K" data-match="4">
+            <div class="team home">Colômbia</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Colômbia">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Portugal">
+            <div class="team away">Portugal</div>
+          </div>
+        
+          <div class="match" data-group="K" data-match="5">
+            <div class="team home">RD Congo</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar RD Congo">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Uzbequistão">
+            <div class="team away">Uzbequistão</div>
+          </div>
+        
+        </div>
+        <div class="table-wrap" id="table-K">
+          <table>
+            <thead>
+              <tr><th>Seleção</th><th>J</th><th>V</th><th>E</th><th>D</th><th>GP</th><th>GC</th><th>SG</th><th>Pts</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1. Portugal</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr><tr><td>2. RD Congo</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr><tr><td>3. Uzbequistão</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr><tr><td>4. Colômbia</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    
+      <article class="card group-card" id="group-L">
+        <div class="card-head">
+          <h2>Grupo L</h2>
+          <span>Inglaterra • Croácia • Gana • Panamá</span>
+        </div>
+        <div class="matches">
+          
+          <div class="match" data-group="L" data-match="0">
+            <div class="team home">Inglaterra</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Inglaterra">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Croácia">
+            <div class="team away">Croácia</div>
+          </div>
+        
+          <div class="match" data-group="L" data-match="1">
+            <div class="team home">Gana</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Gana">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Panamá">
+            <div class="team away">Panamá</div>
+          </div>
+        
+          <div class="match" data-group="L" data-match="2">
+            <div class="team home">Inglaterra</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Inglaterra">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Gana">
+            <div class="team away">Gana</div>
+          </div>
+        
+          <div class="match" data-group="L" data-match="3">
+            <div class="team home">Panamá</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Panamá">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Croácia">
+            <div class="team away">Croácia</div>
+          </div>
+        
+          <div class="match" data-group="L" data-match="4">
+            <div class="team home">Panamá</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Panamá">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Inglaterra">
+            <div class="team away">Inglaterra</div>
+          </div>
+        
+          <div class="match" data-group="L" data-match="5">
+            <div class="team home">Croácia</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="h" aria-label="Placar Croácia">
+            <div class="versus">x</div>
+            <input class="score" inputmode="numeric" type="number" min="0" data-side="a" aria-label="Placar Gana">
+            <div class="team away">Gana</div>
+          </div>
+        
+        </div>
+        <div class="table-wrap" id="table-L">
+          <table>
+            <thead>
+              <tr><th>Seleção</th><th>J</th><th>V</th><th>E</th><th>D</th><th>GP</th><th>GC</th><th>SG</th><th>Pts</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1. Inglaterra</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr><tr><td>2. Croácia</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr><tr><td>3. Gana</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr><tr><td>4. Panamá</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    
+    <article class="card full">
+      <div class="card-head"><h2>Ranking dos terceiros colocados</h2><span>Os 8 primeiros avançam</span></div>
+      <div id="thirds"></div>
+    </article>
+  </div>
+</section>
+
+<section id="tab-ko" class="hidden">
+  <div class="notice ok">Use o botão para preencher o mata-mata com base na simulação. Os jogos continuam editáveis manualmente.</div>
+  <div class="actions">
+    <button id="fillKo">Preencher mata-mata pela simulação</button>
+    <button id="clearKo" class="danger">Limpar mata-mata</button>
+  </div>
+  <div class="ko-grid">
+    <section class="round"><h2>Round of 32</h2>
+          <div class="ko-match" data-ko="73">
+            <div class="ko-title">Jogo 73</div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="home" placeholder="2A">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="h" placeholder="0">
+            </div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="away" placeholder="2B">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="a" placeholder="0">
+            </div>
+            <div class="pens">
+              <span>Pênaltis, se empate:</span>
+              <input inputmode="numeric" type="number" min="0" data-field="ph" placeholder="P1">
+              <input inputmode="numeric" type="number" min="0" data-field="pa" placeholder="P2">
+            </div>
+            <div class="winner">Sem vencedor definido</div>
+          </div>
+        
+          <div class="ko-match" data-ko="74">
+            <div class="ko-title">Jogo 74</div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="home" placeholder="1C">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="h" placeholder="0">
+            </div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="away" placeholder="2F">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="a" placeholder="0">
+            </div>
+            <div class="pens">
+              <span>Pênaltis, se empate:</span>
+              <input inputmode="numeric" type="number" min="0" data-field="ph" placeholder="P1">
+              <input inputmode="numeric" type="number" min="0" data-field="pa" placeholder="P2">
+            </div>
+            <div class="winner">Sem vencedor definido</div>
+          </div>
+        
+          <div class="ko-match" data-ko="75">
+            <div class="ko-title">Jogo 75</div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="home" placeholder="1E">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="h" placeholder="0">
+            </div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="away" placeholder="3A/B/C/D/F">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="a" placeholder="0">
+            </div>
+            <div class="pens">
+              <span>Pênaltis, se empate:</span>
+              <input inputmode="numeric" type="number" min="0" data-field="ph" placeholder="P1">
+              <input inputmode="numeric" type="number" min="0" data-field="pa" placeholder="P2">
+            </div>
+            <div class="winner">Sem vencedor definido</div>
+          </div>
+        
+          <div class="ko-match" data-ko="76">
+            <div class="ko-title">Jogo 76</div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="home" placeholder="1F">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="h" placeholder="0">
+            </div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="away" placeholder="2C">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="a" placeholder="0">
+            </div>
+            <div class="pens">
+              <span>Pênaltis, se empate:</span>
+              <input inputmode="numeric" type="number" min="0" data-field="ph" placeholder="P1">
+              <input inputmode="numeric" type="number" min="0" data-field="pa" placeholder="P2">
+            </div>
+            <div class="winner">Sem vencedor definido</div>
+          </div>
+        
+          <div class="ko-match" data-ko="77">
+            <div class="ko-title">Jogo 77</div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="home" placeholder="2E">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="h" placeholder="0">
+            </div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="away" placeholder="2I">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="a" placeholder="0">
+            </div>
+            <div class="pens">
+              <span>Pênaltis, se empate:</span>
+              <input inputmode="numeric" type="number" min="0" data-field="ph" placeholder="P1">
+              <input inputmode="numeric" type="number" min="0" data-field="pa" placeholder="P2">
+            </div>
+            <div class="winner">Sem vencedor definido</div>
+          </div>
+        
+          <div class="ko-match" data-ko="78">
+            <div class="ko-title">Jogo 78</div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="home" placeholder="1I">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="h" placeholder="0">
+            </div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="away" placeholder="3C/D/F/G/H">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="a" placeholder="0">
+            </div>
+            <div class="pens">
+              <span>Pênaltis, se empate:</span>
+              <input inputmode="numeric" type="number" min="0" data-field="ph" placeholder="P1">
+              <input inputmode="numeric" type="number" min="0" data-field="pa" placeholder="P2">
+            </div>
+            <div class="winner">Sem vencedor definido</div>
+          </div>
+        
+          <div class="ko-match" data-ko="79">
+            <div class="ko-title">Jogo 79</div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="home" placeholder="1A">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="h" placeholder="0">
+            </div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="away" placeholder="3C/E/F/H/I">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="a" placeholder="0">
+            </div>
+            <div class="pens">
+              <span>Pênaltis, se empate:</span>
+              <input inputmode="numeric" type="number" min="0" data-field="ph" placeholder="P1">
+              <input inputmode="numeric" type="number" min="0" data-field="pa" placeholder="P2">
+            </div>
+            <div class="winner">Sem vencedor definido</div>
+          </div>
+        
+          <div class="ko-match" data-ko="80">
+            <div class="ko-title">Jogo 80</div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="home" placeholder="1L">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="h" placeholder="0">
+            </div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="away" placeholder="3E/H/I/J/K">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="a" placeholder="0">
+            </div>
+            <div class="pens">
+              <span>Pênaltis, se empate:</span>
+              <input inputmode="numeric" type="number" min="0" data-field="ph" placeholder="P1">
+              <input inputmode="numeric" type="number" min="0" data-field="pa" placeholder="P2">
+            </div>
+            <div class="winner">Sem vencedor definido</div>
+          </div>
+        
+          <div class="ko-match" data-ko="81">
+            <div class="ko-title">Jogo 81</div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="home" placeholder="1G">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="h" placeholder="0">
+            </div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="away" placeholder="3A/E/H/I/J">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="a" placeholder="0">
+            </div>
+            <div class="pens">
+              <span>Pênaltis, se empate:</span>
+              <input inputmode="numeric" type="number" min="0" data-field="ph" placeholder="P1">
+              <input inputmode="numeric" type="number" min="0" data-field="pa" placeholder="P2">
+            </div>
+            <div class="winner">Sem vencedor definido</div>
+          </div>
+        
+          <div class="ko-match" data-ko="82">
+            <div class="ko-title">Jogo 82</div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="home" placeholder="1D">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="h" placeholder="0">
+            </div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="away" placeholder="3B/E/F/I/J">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="a" placeholder="0">
+            </div>
+            <div class="pens">
+              <span>Pênaltis, se empate:</span>
+              <input inputmode="numeric" type="number" min="0" data-field="ph" placeholder="P1">
+              <input inputmode="numeric" type="number" min="0" data-field="pa" placeholder="P2">
+            </div>
+            <div class="winner">Sem vencedor definido</div>
+          </div>
+        
+          <div class="ko-match" data-ko="83">
+            <div class="ko-title">Jogo 83</div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="home" placeholder="1H">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="h" placeholder="0">
+            </div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="away" placeholder="2J">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="a" placeholder="0">
+            </div>
+            <div class="pens">
+              <span>Pênaltis, se empate:</span>
+              <input inputmode="numeric" type="number" min="0" data-field="ph" placeholder="P1">
+              <input inputmode="numeric" type="number" min="0" data-field="pa" placeholder="P2">
+            </div>
+            <div class="winner">Sem vencedor definido</div>
+          </div>
+        
+          <div class="ko-match" data-ko="84">
+            <div class="ko-title">Jogo 84</div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="home" placeholder="2K">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="h" placeholder="0">
+            </div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="away" placeholder="2L">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="a" placeholder="0">
+            </div>
+            <div class="pens">
+              <span>Pênaltis, se empate:</span>
+              <input inputmode="numeric" type="number" min="0" data-field="ph" placeholder="P1">
+              <input inputmode="numeric" type="number" min="0" data-field="pa" placeholder="P2">
+            </div>
+            <div class="winner">Sem vencedor definido</div>
+          </div>
+        
+          <div class="ko-match" data-ko="85">
+            <div class="ko-title">Jogo 85</div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="home" placeholder="1B">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="h" placeholder="0">
+            </div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="away" placeholder="3E/F/G/I/J">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="a" placeholder="0">
+            </div>
+            <div class="pens">
+              <span>Pênaltis, se empate:</span>
+              <input inputmode="numeric" type="number" min="0" data-field="ph" placeholder="P1">
+              <input inputmode="numeric" type="number" min="0" data-field="pa" placeholder="P2">
+            </div>
+            <div class="winner">Sem vencedor definido</div>
+          </div>
+        
+          <div class="ko-match" data-ko="86">
+            <div class="ko-title">Jogo 86</div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="home" placeholder="2D">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="h" placeholder="0">
+            </div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="away" placeholder="2G">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="a" placeholder="0">
+            </div>
+            <div class="pens">
+              <span>Pênaltis, se empate:</span>
+              <input inputmode="numeric" type="number" min="0" data-field="ph" placeholder="P1">
+              <input inputmode="numeric" type="number" min="0" data-field="pa" placeholder="P2">
+            </div>
+            <div class="winner">Sem vencedor definido</div>
+          </div>
+        
+          <div class="ko-match" data-ko="87">
+            <div class="ko-title">Jogo 87</div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="home" placeholder="1J">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="h" placeholder="0">
+            </div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="away" placeholder="2H">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="a" placeholder="0">
+            </div>
+            <div class="pens">
+              <span>Pênaltis, se empate:</span>
+              <input inputmode="numeric" type="number" min="0" data-field="ph" placeholder="P1">
+              <input inputmode="numeric" type="number" min="0" data-field="pa" placeholder="P2">
+            </div>
+            <div class="winner">Sem vencedor definido</div>
+          </div>
+        
+          <div class="ko-match" data-ko="88">
+            <div class="ko-title">Jogo 88</div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="home" placeholder="1K">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="h" placeholder="0">
+            </div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="away" placeholder="3D/E/I/J/L">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="a" placeholder="0">
+            </div>
+            <div class="pens">
+              <span>Pênaltis, se empate:</span>
+              <input inputmode="numeric" type="number" min="0" data-field="ph" placeholder="P1">
+              <input inputmode="numeric" type="number" min="0" data-field="pa" placeholder="P2">
+            </div>
+            <div class="winner">Sem vencedor definido</div>
+          </div>
+        </section><section class="round"><h2>Oitavas</h2>
+          <div class="ko-match" data-ko="89">
+            <div class="ko-title">Jogo 89</div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="home" placeholder="W73">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="h" placeholder="0">
+            </div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="away" placeholder="W75">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="a" placeholder="0">
+            </div>
+            <div class="pens">
+              <span>Pênaltis, se empate:</span>
+              <input inputmode="numeric" type="number" min="0" data-field="ph" placeholder="P1">
+              <input inputmode="numeric" type="number" min="0" data-field="pa" placeholder="P2">
+            </div>
+            <div class="winner">Sem vencedor definido</div>
+          </div>
+        
+          <div class="ko-match" data-ko="90">
+            <div class="ko-title">Jogo 90</div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="home" placeholder="W74">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="h" placeholder="0">
+            </div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="away" placeholder="W77">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="a" placeholder="0">
+            </div>
+            <div class="pens">
+              <span>Pênaltis, se empate:</span>
+              <input inputmode="numeric" type="number" min="0" data-field="ph" placeholder="P1">
+              <input inputmode="numeric" type="number" min="0" data-field="pa" placeholder="P2">
+            </div>
+            <div class="winner">Sem vencedor definido</div>
+          </div>
+        
+          <div class="ko-match" data-ko="91">
+            <div class="ko-title">Jogo 91</div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="home" placeholder="W76">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="h" placeholder="0">
+            </div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="away" placeholder="W78">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="a" placeholder="0">
+            </div>
+            <div class="pens">
+              <span>Pênaltis, se empate:</span>
+              <input inputmode="numeric" type="number" min="0" data-field="ph" placeholder="P1">
+              <input inputmode="numeric" type="number" min="0" data-field="pa" placeholder="P2">
+            </div>
+            <div class="winner">Sem vencedor definido</div>
+          </div>
+        
+          <div class="ko-match" data-ko="92">
+            <div class="ko-title">Jogo 92</div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="home" placeholder="W79">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="h" placeholder="0">
+            </div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="away" placeholder="W80">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="a" placeholder="0">
+            </div>
+            <div class="pens">
+              <span>Pênaltis, se empate:</span>
+              <input inputmode="numeric" type="number" min="0" data-field="ph" placeholder="P1">
+              <input inputmode="numeric" type="number" min="0" data-field="pa" placeholder="P2">
+            </div>
+            <div class="winner">Sem vencedor definido</div>
+          </div>
+        
+          <div class="ko-match" data-ko="93">
+            <div class="ko-title">Jogo 93</div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="home" placeholder="W83">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="h" placeholder="0">
+            </div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="away" placeholder="W84">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="a" placeholder="0">
+            </div>
+            <div class="pens">
+              <span>Pênaltis, se empate:</span>
+              <input inputmode="numeric" type="number" min="0" data-field="ph" placeholder="P1">
+              <input inputmode="numeric" type="number" min="0" data-field="pa" placeholder="P2">
+            </div>
+            <div class="winner">Sem vencedor definido</div>
+          </div>
+        
+          <div class="ko-match" data-ko="94">
+            <div class="ko-title">Jogo 94</div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="home" placeholder="W81">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="h" placeholder="0">
+            </div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="away" placeholder="W82">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="a" placeholder="0">
+            </div>
+            <div class="pens">
+              <span>Pênaltis, se empate:</span>
+              <input inputmode="numeric" type="number" min="0" data-field="ph" placeholder="P1">
+              <input inputmode="numeric" type="number" min="0" data-field="pa" placeholder="P2">
+            </div>
+            <div class="winner">Sem vencedor definido</div>
+          </div>
+        
+          <div class="ko-match" data-ko="95">
+            <div class="ko-title">Jogo 95</div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="home" placeholder="W86">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="h" placeholder="0">
+            </div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="away" placeholder="W88">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="a" placeholder="0">
+            </div>
+            <div class="pens">
+              <span>Pênaltis, se empate:</span>
+              <input inputmode="numeric" type="number" min="0" data-field="ph" placeholder="P1">
+              <input inputmode="numeric" type="number" min="0" data-field="pa" placeholder="P2">
+            </div>
+            <div class="winner">Sem vencedor definido</div>
+          </div>
+        
+          <div class="ko-match" data-ko="96">
+            <div class="ko-title">Jogo 96</div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="home" placeholder="W85">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="h" placeholder="0">
+            </div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="away" placeholder="W87">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="a" placeholder="0">
+            </div>
+            <div class="pens">
+              <span>Pênaltis, se empate:</span>
+              <input inputmode="numeric" type="number" min="0" data-field="ph" placeholder="P1">
+              <input inputmode="numeric" type="number" min="0" data-field="pa" placeholder="P2">
+            </div>
+            <div class="winner">Sem vencedor definido</div>
+          </div>
+        </section><section class="round"><h2>Quartas</h2>
+          <div class="ko-match" data-ko="97">
+            <div class="ko-title">Jogo 97</div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="home" placeholder="W89">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="h" placeholder="0">
+            </div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="away" placeholder="W90">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="a" placeholder="0">
+            </div>
+            <div class="pens">
+              <span>Pênaltis, se empate:</span>
+              <input inputmode="numeric" type="number" min="0" data-field="ph" placeholder="P1">
+              <input inputmode="numeric" type="number" min="0" data-field="pa" placeholder="P2">
+            </div>
+            <div class="winner">Sem vencedor definido</div>
+          </div>
+        
+          <div class="ko-match" data-ko="98">
+            <div class="ko-title">Jogo 98</div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="home" placeholder="W91">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="h" placeholder="0">
+            </div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="away" placeholder="W92">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="a" placeholder="0">
+            </div>
+            <div class="pens">
+              <span>Pênaltis, se empate:</span>
+              <input inputmode="numeric" type="number" min="0" data-field="ph" placeholder="P1">
+              <input inputmode="numeric" type="number" min="0" data-field="pa" placeholder="P2">
+            </div>
+            <div class="winner">Sem vencedor definido</div>
+          </div>
+        
+          <div class="ko-match" data-ko="99">
+            <div class="ko-title">Jogo 99</div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="home" placeholder="W93">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="h" placeholder="0">
+            </div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="away" placeholder="W94">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="a" placeholder="0">
+            </div>
+            <div class="pens">
+              <span>Pênaltis, se empate:</span>
+              <input inputmode="numeric" type="number" min="0" data-field="ph" placeholder="P1">
+              <input inputmode="numeric" type="number" min="0" data-field="pa" placeholder="P2">
+            </div>
+            <div class="winner">Sem vencedor definido</div>
+          </div>
+        
+          <div class="ko-match" data-ko="100">
+            <div class="ko-title">Jogo 100</div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="home" placeholder="W95">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="h" placeholder="0">
+            </div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="away" placeholder="W96">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="a" placeholder="0">
+            </div>
+            <div class="pens">
+              <span>Pênaltis, se empate:</span>
+              <input inputmode="numeric" type="number" min="0" data-field="ph" placeholder="P1">
+              <input inputmode="numeric" type="number" min="0" data-field="pa" placeholder="P2">
+            </div>
+            <div class="winner">Sem vencedor definido</div>
+          </div>
+        </section><section class="round"><h2>Semifinais / Final</h2>
+          <div class="ko-match" data-ko="101">
+            <div class="ko-title">Jogo 101</div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="home" placeholder="W97">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="h" placeholder="0">
+            </div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="away" placeholder="W98">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="a" placeholder="0">
+            </div>
+            <div class="pens">
+              <span>Pênaltis, se empate:</span>
+              <input inputmode="numeric" type="number" min="0" data-field="ph" placeholder="P1">
+              <input inputmode="numeric" type="number" min="0" data-field="pa" placeholder="P2">
+            </div>
+            <div class="winner">Sem vencedor definido</div>
+          </div>
+        
+          <div class="ko-match" data-ko="102">
+            <div class="ko-title">Jogo 102</div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="home" placeholder="W99">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="h" placeholder="0">
+            </div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="away" placeholder="W100">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="a" placeholder="0">
+            </div>
+            <div class="pens">
+              <span>Pênaltis, se empate:</span>
+              <input inputmode="numeric" type="number" min="0" data-field="ph" placeholder="P1">
+              <input inputmode="numeric" type="number" min="0" data-field="pa" placeholder="P2">
+            </div>
+            <div class="winner">Sem vencedor definido</div>
+          </div>
+        
+          <div class="ko-match" data-ko="103">
+            <div class="ko-title">Jogo 103</div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="home" placeholder="L101">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="h" placeholder="0">
+            </div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="away" placeholder="L102">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="a" placeholder="0">
+            </div>
+            <div class="pens">
+              <span>Pênaltis, se empate:</span>
+              <input inputmode="numeric" type="number" min="0" data-field="ph" placeholder="P1">
+              <input inputmode="numeric" type="number" min="0" data-field="pa" placeholder="P2">
+            </div>
+            <div class="winner">Sem vencedor definido</div>
+          </div>
+        
+          <div class="ko-match" data-ko="104">
+            <div class="ko-title">Jogo 104</div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="home" placeholder="W101">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="h" placeholder="0">
+            </div>
+            <div class="ko-row">
+              <input class="ko-team" data-field="away" placeholder="W102">
+              <input class="ko-score" inputmode="numeric" type="number" min="0" data-field="a" placeholder="0">
+            </div>
+            <div class="pens">
+              <span>Pênaltis, se empate:</span>
+              <input inputmode="numeric" type="number" min="0" data-field="ph" placeholder="P1">
+              <input inputmode="numeric" type="number" min="0" data-field="pa" placeholder="P2">
+            </div>
+            <div class="winner">Sem vencedor definido</div>
+          </div>
+        </section>
+  </div>
+</section>
+
+<section id="tab-real" class="hidden">
+  <article class="card full">
+    <div class="card-head"><h2>Dados reais dos jogos</h2><span>Gols, minutos e pênaltis</span></div>
+    <div class="notice">Cole um JSON de jogos aqui. Depois dá para trocar essa entrada manual por uma API.</div>
+    <textarea id="realJson" placeholder='[
+  {"fase":"Grupo C","home":"Brasil","away":"Marrocos","homeScore":2,"awayScore":1,
+   "goals":[{"team":"Brasil","player":"Vini Jr.","minute":23}]}
+]'></textarea>
+    <div class="actions">
+      <button id="renderReal">Renderizar</button>
+      <button id="sampleReal">Carregar exemplo</button>
+    </div>
+    <div id="realOut"></div>
+  </article>
+</section>
+
+<section id="tab-help" class="hidden">
+  <article class="card full">
+    <h2>Como abrir no iPhone</h2>
+    <div class="notice ok">
+      Melhor caminho: baixe o ZIP, abra no app Arquivos, descompacte, toque e segure no HTML, compartilhe/abra com Safari. Evite abrir só na prévia do ChatGPT ou do Arquivos.
+    </div>
+    <p class="sub">
+      Motivo: alguns visualizadores de arquivo mostram o HTML, mas bloqueiam ou limitam JavaScript/localStorage. Essa versão já mostra os jogos sem depender disso, mas para salvar e recalcular o ideal é Safari.
+    </p>
+  </article>
+</section>
+</main>
+
+<script>
+const GROUPS = {"A": ["México", "África do Sul", "Coreia do Sul", "Tchéquia"], "B": ["Canadá", "Bósnia e Herzegovina", "Catar", "Suíça"], "C": ["Brasil", "Marrocos", "Haiti", "Escócia"], "D": ["Estados Unidos", "Paraguai", "Austrália", "Turquia"], "E": ["Alemanha", "Curaçao", "Costa do Marfim", "Equador"], "F": ["Países Baixos", "Japão", "Suécia", "Tunísia"], "G": ["Bélgica", "Egito", "Irã", "Nova Zelândia"], "H": ["Espanha", "Cabo Verde", "Arábia Saudita", "Uruguai"], "I": ["França", "Senegal", "Iraque", "Noruega"], "J": ["Argentina", "Argélia", "Áustria", "Jordânia"], "K": ["Portugal", "RD Congo", "Uzbequistão", "Colômbia"], "L": ["Inglaterra", "Croácia", "Gana", "Panamá"]};
+const PATTERN = [[0, 1], [2, 3], [0, 2], [3, 1], [3, 0], [1, 2]];
+const KO = {"73": ["2A", "2B"], "74": ["1C", "2F"], "75": ["1E", "3A/B/C/D/F"], "76": ["1F", "2C"], "77": ["2E", "2I"], "78": ["1I", "3C/D/F/G/H"], "79": ["1A", "3C/E/F/H/I"], "80": ["1L", "3E/H/I/J/K"], "81": ["1G", "3A/E/H/I/J"], "82": ["1D", "3B/E/F/I/J"], "83": ["1H", "2J"], "84": ["2K", "2L"], "85": ["1B", "3E/F/G/I/J"], "86": ["2D", "2G"], "87": ["1J", "2H"], "88": ["1K", "3D/E/I/J/L"], "89": ["W73", "W75"], "90": ["W74", "W77"], "91": ["W76", "W78"], "92": ["W79", "W80"], "93": ["W83", "W84"], "94": ["W81", "W82"], "95": ["W86", "W88"], "96": ["W85", "W87"], "97": ["W89", "W90"], "98": ["W91", "W92"], "99": ["W93", "W94"], "100": ["W95", "W96"], "101": ["W97", "W98"], "102": ["W99", "W100"], "103": ["L101", "L102"], "104": ["W101", "W102"]};
+const STORE = "copa2026-dashboard-mobile-v2";
+
+function $(sel, root=document){ return root.querySelector(sel); }
+function $$(sel, root=document){ return Array.from(root.querySelectorAll(sel)); }
+function esc(v){ return String(v ?? "").replace(/[&<>"']/g, s=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[s])); }
+
+let state = load();
+function baseState(){
+  const s={groups:{}, ko:{}, real:""};
+  Object.keys(GROUPS).forEach(g=>{s.groups[g]=Array(6).fill(0).map(()=>({h:"",a:""}));});
+  Object.keys(KO).forEach(id=>{s.ko[id]={home:"",away:"",h:"",a:"",ph:"",pa:""};});
+  return s;
+}
+function load(){ try{ return JSON.parse(localStorage.getItem(STORE)) || baseState(); }catch(e){ return baseState(); } }
+function save(){ try{ localStorage.setItem(STORE, JSON.stringify(state)); }catch(e){} }
+
+function initTabs(){
+  $$("button[data-tab]").forEach(b=>b.addEventListener("click",()=>{
+    const name=b.dataset.tab;
+    ["sim","ko","real","help"].forEach(t=>$("#tab-"+t).classList.toggle("hidden",t!==name));
+    $$("button[data-tab]").forEach(x=>x.classList.toggle("active",x.dataset.tab===name));
+    if(name==="ko") renderKO();
+  }));
+}
+
+function initGroupInputs(){
+  $$(".match").forEach(m=>{
+    const g=m.dataset.group, idx=Number(m.dataset.match);
+    ["h","a"].forEach(side=>{
+      const inp=$(`input[data-side="${side}"]`,m);
+      inp.value = state.groups[g]?.[idx]?.[side] ?? "";
+      inp.addEventListener("input",()=>{
+        state.groups[g][idx][side]=inp.value==="" ? "" : Math.max(0, parseInt(inp.value,10)||0);
+        save(); renderTables();
+      });
+    });
+  });
+}
+
+function calcGroup(g){
+  const teams=GROUPS[g];
+  const t={};
+  teams.forEach(name=>t[name]={team:name,g,Pld:0,W:0,D:0,L:0,GF:0,GA:0,GD:0,Pts:0});
+  PATTERN.forEach((p,idx)=>{
+    const sc=state.groups[g][idx];
+    if(sc.h!=="" && sc.a!==""){
+      const home=teams[p[0]], away=teams[p[1]], h=Number(sc.h), a=Number(sc.a);
+      t[home].Pld++; t[away].Pld++;
+      t[home].GF+=h; t[home].GA+=a; t[away].GF+=a; t[away].GA+=h;
+      if(h>a){t[home].W++; t[away].L++; t[home].Pts+=3;}
+      else if(a>h){t[away].W++; t[home].L++; t[away].Pts+=3;}
+      else{t[home].D++; t[away].D++; t[home].Pts++; t[away].Pts++;}
+    }
+  });
+  Object.values(t).forEach(r=>r.GD=r.GF-r.GA);
+  return Object.values(t).sort((a,b)=>b.Pts-a.Pts || b.GD-a.GD || b.GF-a.GF || a.team.localeCompare(b.team,"pt-BR"));
+}
+
+function renderTables(){
+  let filled=0, thirds=[];
+  Object.keys(GROUPS).forEach(g=>{
+    const rows=calcGroup(g);
+    const body = rows.map((r,i)=>`<tr class="${i<2?'qual':i===2?'third':''}"><td>${i+1}. ${esc(r.team)}</td><td>${r.Pld}</td><td>${r.W}</td><td>${r.D}</td><td>${r.L}</td><td>${r.GF}</td><td>${r.GA}</td><td>${r.GD}</td><td><b>${r.Pts}</b></td></tr>`).join("");
+    $("#table-"+g).innerHTML = `<table><thead><tr><th>Seleção</th><th>J</th><th>V</th><th>E</th><th>D</th><th>GP</th><th>GC</th><th>SG</th><th>Pts</th></tr></thead><tbody>${body}</tbody></table>`;
+    thirds.push(rows[2]);
+    state.groups[g].forEach(sc=>{ if(sc.h!=="" && sc.a!=="") filled++; });
+  });
+  thirds.sort((a,b)=>b.Pts-a.Pts || b.GD-a.GD || b.GF-a.GF || a.team.localeCompare(b.team,"pt-BR"));
+  $("#filled").textContent=filled;
+  $("#thirds").innerHTML = `<table><thead><tr><th>#</th><th>Seleção</th><th>Grupo</th><th>Pts</th><th>SG</th><th>GP</th></tr></thead><tbody>`+
+    thirds.map((r,i)=>`<tr class="${i<8?'third':''}"><td>${i+1}</td><td>${esc(r.team)}</td><td>${r.g}</td><td><b>${r.Pts}</b></td><td>${r.GD}</td><td>${r.GF}</td></tr>`).join("")+
+    `</tbody></table>`;
+}
+
+function ranks(){
+  const r={}, thirds=[];
+  Object.keys(GROUPS).forEach(g=>{
+    const rows=calcGroup(g);
+    r["1"+g]=rows[0].team; r["2"+g]=rows[1].team; r["3"+g]=rows[2].team;
+    thirds.push(rows[2]);
+  });
+  thirds.sort((a,b)=>b.Pts-a.Pts || b.GD-a.GD || b.GF-a.GF || a.team.localeCompare(b.team,"pt-BR"));
+  return {r, thirds:thirds.slice(0,8)};
+}
+
+function slotName(slot, r, thirds, used){
+  if(r[slot]) return r[slot];
+  if(slot.startsWith("3")){
+    const allowed=slot.slice(1).split("/");
+    const pick=thirds.find(x=>allowed.includes(x.g) && !used.has(x.g));
+    if(pick){ used.add(pick.g); return pick.team; }
+  }
+  return slot;
+}
+
+function fillKO(){
+  const {r,thirds}=ranks();
+  const used=new Set();
+  Object.keys(KO).forEach(id=>{
+    if(Number(id)<=88){
+      const [s1,s2]=KO[id];
+      state.ko[id].home=slotName(s1,r,thirds,used);
+      state.ko[id].away=slotName(s2,r,thirds,used);
+    }
+  });
+  save(); renderKO();
+}
+
+function getWinner(id){
+  const m=state.ko[id]; if(!m || !m.home || !m.away || m.h==="" || m.a==="") return "";
+  const h=Number(m.h), a=Number(m.a);
+  if(h>a) return m.home; if(a>h) return m.away;
+  if(m.ph!=="" && m.pa!==""){ const ph=Number(m.ph), pa=Number(m.pa); if(ph>pa) return m.home; if(pa>ph) return m.away; }
+  return "";
+}
+function getLoser(id){ const w=getWinner(id), m=state.ko[id]; if(!w) return ""; return w===m.home ? m.away : m.home; }
+function advance(){
+  Object.keys(KO).forEach(id=>{
+    if(Number(id)>88){
+      const [a,b]=KO[id];
+      state.ko[id].home = a.startsWith("W") ? (getWinner(a.slice(1)) || a) : a.startsWith("L") ? (getLoser(a.slice(1)) || a) : a;
+      state.ko[id].away = b.startsWith("W") ? (getWinner(b.slice(1)) || b) : b.startsWith("L") ? (getLoser(b.slice(1)) || b) : b;
+    }
+  });
+}
+function renderKO(){
+  advance();
+  $$(".ko-match").forEach(card=>{
+    const id=card.dataset.ko, m=state.ko[id];
+    $$("input",card).forEach(inp=>{
+      const f=inp.dataset.field;
+      inp.value = m[f] ?? "";
+      inp.oninput = ()=>{
+        const val=inp.value;
+        state.ko[id][f] = ["h","a","ph","pa"].includes(f) ? (val==="" ? "" : Math.max(0, parseInt(val,10)||0)) : val;
+        save(); renderKO();
+      };
+    });
+    const w=getWinner(id), out=$(".winner",card);
+    out.textContent = w ? "Vencedor: "+w : "Sem vencedor definido";
+    out.classList.toggle("oktxt", !!w);
+  });
+}
+
+function initKO(){
+  $("#fillKo").addEventListener("click",fillKO);
+  $("#clearKo").addEventListener("click",()=>{
+    if(!confirm("Limpar todos os jogos do mata-mata?")) return;
+    Object.keys(KO).forEach(id=>state.ko[id]={home:"",away:"",h:"",a:"",ph:"",pa:""});
+    save(); renderKO();
+  });
+}
+
+function initReal(){
+  $("#realJson").value = state.real || "";
+  $("#renderReal").addEventListener("click",renderReal);
+  $("#sampleReal").addEventListener("click",()=>{
+    $("#realJson").value=JSON.stringify([{fase:"Grupo C",home:"Brasil",away:"Marrocos",homeScore:2,awayScore:1,penHome:null,penAway:null,goals:[{team:"Brasil",player:"Vini Jr.",minute:23},{team:"Marrocos",player:"Hakimi",minute:51},{team:"Brasil",player:"Neymar",minute:78,penalty:true}]}],null,2);
+    renderReal();
+  });
+}
+function renderReal(){
+  const txt=$("#realJson").value.trim(); state.real=txt; save();
+  if(!txt){ $("#realOut").innerHTML=""; return; }
+  try{
+    const data=JSON.parse(txt);
+    $("#realOut").innerHTML=data.map(m=>`<div class="event-card"><div class="sub">${esc(m.fase||"")}</div><h3>${esc(m.home)} ${esc(m.homeScore)} x ${esc(m.awayScore)} ${esc(m.away)}</h3>${m.penHome!=null&&m.penAway!=null?`<div class="sub">Pênaltis: ${esc(m.penHome)} x ${esc(m.penAway)}</div>`:""}<ul>${(m.goals||[]).map(g=>`<li><b>${esc(g.minute)}'</b> — ${esc(g.team)}: ${esc(g.player)} ${g.penalty?"(pênalti)":""} ${g.ownGoal?"(contra)":""}</li>`).join("") || "<li>Sem gols cadastrados.</li>"}</ul></div>`).join("");
+  }catch(e){ $("#realOut").innerHTML=`<div class="notice">JSON inválido: ${esc(e.message)}</div>`; }
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
+  initTabs(); initGroupInputs(); initKO(); initReal(); renderTables(); renderKO();
+});
+</script>
+<noscript>
+  <div class="wrap"><div class="notice">Seu navegador/visualizador bloqueou JavaScript. Os jogos e campos aparecem, mas a tabela automática e o salvamento precisam do Safari/Chrome.</div></div>
+</noscript>
+</body>
+</html>
