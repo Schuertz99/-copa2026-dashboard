@@ -13,5 +13,5 @@ Como publicar:
 4. Em Build and deployment, escolha Deploy from a branch.
 5. Selecione main e /(root), depois Save.
 
-Link esperado:
-https://schuertz99.github.io/copa2026-dashboard/
+Link:
+(https://schuertz99.github.io/-copa2026-dashboard/)
