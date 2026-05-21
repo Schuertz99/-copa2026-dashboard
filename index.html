@@ -53,13 +53,15 @@ tr.third td:first-child{color:var(--warn);font-weight:900}
 .winner{font-size:12px;margin-top:7px;color:var(--muted)} .winner.oktxt{color:var(--accent);font-weight:900}
 textarea{width:100%;min-height:160px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px}
 .event-card{border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035);border-radius:14px;margin:10px 0;padding:12px}
+
+.match-meta{grid-column:1/-1;font-size:12px;color:var(--muted);line-height:1.35;margin-bottom:2px}.match-meta b{color:var(--accent)}.match-meta span{color:#cfe0f5}.broadcast-line{grid-column:1/-1;display:block;color:#dbe8ff;font-size:12px;margin:3px 0 5px}.broadcast-input{width:100%;margin-top:4px;font-size:12px}.ko-title{color:var(--accent);font-weight:900}.ko-match .match-meta,.ko-match .broadcast-line{display:block}.ko-match .broadcast-input{width:100%}
 </style>
 </head>
 <body>
 <header>
   <div class="wrap">
-    <h1>Dashboard Copa 2026 — versão iPhone/mobile</h1>
-    <div class="sub">Os jogos já estão no HTML. Se o JavaScript não rodar no visualizador do iPhone, os campos ainda aparecem.</div>
+    <h1>Dashboard Copa 2026 — versão atualizada</h1>
+    <div class="sub">Agora com data, dia da semana, horário local/Brasília, estádio/cidade e transmissão editável.</div>
     <div class="tabs">
       <button class="active" data-tab="sim">Simulação</button>
       <button data-tab="ko">Mata-mata</button>
@@ -71,7 +73,7 @@ textarea{width:100%;min-height:160px;font-family:ui-monospace,SFMono-Regular,Men
 
 <main class="wrap">
 <section id="tab-sim">
-  <div class="notice">Digite os placares da fase de grupos. A tabela recalcula automaticamente quando o JavaScript roda. Se abrir só como prévia de arquivo no iPhone, os campos aparecem, mas talvez não salve/recalcule até abrir no Safari.</div>
+  <div class="notice">Digite os placares da fase de grupos. Cada jogo agora mostra data, dia da semana, horário local/Brasília, estádio/cidade e campo “Onde passa”.</div>
   <div class="metrics">
     <div class="metric"><span>Jogos da fase de grupos</span><b>72</b></div>
     <div class="metric"><span>Placares preenchidos</span><b id="filled">0</b></div>
@@ -1522,7 +1524,10 @@ textarea{width:100%;min-height:160px;font-family:ui-monospace,SFMono-Regular,Men
 <script>
 const GROUPS = {"A": ["México", "África do Sul", "Coreia do Sul", "Tchéquia"], "B": ["Canadá", "Bósnia e Herzegovina", "Catar", "Suíça"], "C": ["Brasil", "Marrocos", "Haiti", "Escócia"], "D": ["Estados Unidos", "Paraguai", "Austrália", "Turquia"], "E": ["Alemanha", "Curaçao", "Costa do Marfim", "Equador"], "F": ["Países Baixos", "Japão", "Suécia", "Tunísia"], "G": ["Bélgica", "Egito", "Irã", "Nova Zelândia"], "H": ["Espanha", "Cabo Verde", "Arábia Saudita", "Uruguai"], "I": ["França", "Senegal", "Iraque", "Noruega"], "J": ["Argentina", "Argélia", "Áustria", "Jordânia"], "K": ["Portugal", "RD Congo", "Uzbequistão", "Colômbia"], "L": ["Inglaterra", "Croácia", "Gana", "Panamá"]};
 const PATTERN = [[0, 1], [2, 3], [0, 2], [3, 1], [3, 0], [1, 2]];
-const KO = {"73": ["2A", "2B"], "74": ["1C", "2F"], "75": ["1E", "3A/B/C/D/F"], "76": ["1F", "2C"], "77": ["2E", "2I"], "78": ["1I", "3C/D/F/G/H"], "79": ["1A", "3C/E/F/H/I"], "80": ["1L", "3E/H/I/J/K"], "81": ["1G", "3A/E/H/I/J"], "82": ["1D", "3B/E/F/I/J"], "83": ["1H", "2J"], "84": ["2K", "2L"], "85": ["1B", "3E/F/G/I/J"], "86": ["2D", "2G"], "87": ["1J", "2H"], "88": ["1K", "3D/E/I/J/L"], "89": ["W73", "W75"], "90": ["W74", "W77"], "91": ["W76", "W78"], "92": ["W79", "W80"], "93": ["W83", "W84"], "94": ["W81", "W82"], "95": ["W86", "W88"], "96": ["W85", "W87"], "97": ["W89", "W90"], "98": ["W91", "W92"], "99": ["W93", "W94"], "100": ["W95", "W96"], "101": ["W97", "W98"], "102": ["W99", "W100"], "103": ["L101", "L102"], "104": ["W101", "W102"]};
+const KO = {"73": ["2A", "2B"], "74": ["1E", "3A/B/C/D/F"], "75": ["1F", "2C"], "76": ["1C", "2F"], "77": ["1I", "3C/D/F/G/H"], "78": ["2E", "2I"], "79": ["1A", "3C/E/F/H/I"], "80": ["1L", "3E/H/I/J/K"], "81": ["1D", "3B/E/F/I/J"], "82": ["1G", "3A/E/H/I/J"], "83": ["2K", "2L"], "84": ["1H", "2J"], "85": ["1B", "3E/F/G/I/J"], "86": ["1J", "2H"], "87": ["1K", "3D/E/I/J/L"], "88": ["2D", "2G"], "89": ["W74", "W77"], "90": ["W73", "W75"], "91": ["W76", "W78"], "92": ["W79", "W80"], "93": ["W83", "W84"], "94": ["W81", "W82"], "95": ["W86", "W88"], "96": ["W85", "W87"], "97": ["W89", "W90"], "98": ["W93", "W94"], "99": ["W91", "W92"], "100": ["W95", "W96"], "101": ["W97", "W98"], "102": ["W99", "W100"], "103": ["L101", "L102"], "104": ["W101", "W102"]};
+
+const MATCH_INFO = {"A": [[1, "2026-06-11", "13:00", -6, "Estádio Azteca", "Cidade do México"], [2, "2026-06-11", "20:00", -6, "Estadio Akron", "Zapopan"], [28, "2026-06-18", "19:00", -6, "Estadio Akron", "Zapopan"], [25, "2026-06-18", "12:00", -4, "Mercedes-Benz Stadium", "Atlanta"], [53, "2026-06-24", "19:00", -6, "Estádio Azteca", "Cidade do México"], [54, "2026-06-24", "19:00", -6, "Estádio BBVA", "Guadalupe"]], "B": [[3, "2026-06-12", "15:00", -4, "BMO Field", "Toronto"], [8, "2026-06-13", "12:00", -7, "Levi's Stadium", "Santa Clara"], [27, "2026-06-18", "15:00", -7, "BC Place", "Vancouver"], [26, "2026-06-18", "12:00", -7, "SoFi Stadium", "Inglewood"], [51, "2026-06-24", "12:00", -7, "BC Place", "Vancouver"], [52, "2026-06-24", "12:00", -7, "Lumen Field", "Seattle"]], "C": [[5, "2026-06-13", "18:00", -4, "MetLife Stadium", "East Rutherford"], [7, "2026-06-13", "21:00", -4, "Gillette Stadium", "Foxborough"], [30, "2026-06-19", "20:30", -4, "Lincoln Financial Field", "Filadélfia"], [29, "2026-06-19", "18:00", -4, "Gillette Stadium", "Foxborough"], [55, "2026-06-24", "18:00", -4, "Hard Rock Stadium", "Miami Gardens"], [56, "2026-06-24", "18:00", -4, "Mercedes-Benz Stadium", "Atlanta"]], "D": [[4, "2026-06-12", "18:00", -7, "SoFi Stadium", "Inglewood"], [6, "2026-06-12", "21:00", -7, "BC Place", "Vancouver"], [32, "2026-06-19", "12:00", -7, "Lumen Field", "Seattle"], [31, "2026-06-19", "21:00", -7, "Levi's Stadium", "Santa Clara"], [59, "2026-06-25", "19:00", -7, "SoFi Stadium", "Inglewood"], [60, "2026-06-25", "19:00", -7, "Levi's Stadium", "Santa Clara"]], "E": [[9, "2026-06-14", "12:00", -5, "NRG Stadium", "Houston"], [10, "2026-06-14", "19:00", -4, "Lincoln Financial Field", "Filadélfia"], [33, "2026-06-20", "16:00", -4, "BMO Field", "Toronto"], [34, "2026-06-20", "19:00", -5, "Arrowhead Stadium", "Kansas City"], [50, "2026-06-25", "16:00", -4, "MetLife Stadium", "East Rutherford"], [49, "2026-06-25", "16:00", -4, "Lincoln Financial Field", "Filadélfia"]], "F": [[11, "2026-06-14", "15:00", -5, "AT&T Stadium", "Arlington"], [12, "2026-06-14", "20:00", -6, "Estádio BBVA", "Guadalupe"], [35, "2026-06-20", "15:00", -5, "NRG Stadium", "Houston"], [36, "2026-06-20", "22:00", -6, "Estádio BBVA", "Guadalupe"], [58, "2026-06-25", "18:00", -5, "Arrowhead Stadium", "Kansas City"], [57, "2026-06-25", "18:00", -5, "AT&T Stadium", "Arlington"]], "G": [[16, "2026-06-15", "12:00", -7, "Lumen Field", "Seattle"], [15, "2026-06-15", "18:00", -7, "SoFi Stadium", "Inglewood"], [39, "2026-06-21", "12:00", -7, "SoFi Stadium", "Inglewood"], [40, "2026-06-21", "18:00", -7, "BC Place", "Vancouver"], [64, "2026-06-26", "20:00", -7, "BC Place", "Vancouver"], [63, "2026-06-26", "20:00", -7, "Lumen Field", "Seattle"]], "H": [[14, "2026-06-15", "12:00", -4, "Mercedes-Benz Stadium", "Atlanta"], [13, "2026-06-15", "18:00", -4, "Hard Rock Stadium", "Miami Gardens"], [38, "2026-06-21", "12:00", -4, "Mercedes-Benz Stadium", "Atlanta"], [37, "2026-06-21", "18:00", -4, "Hard Rock Stadium", "Miami Gardens"], [66, "2026-06-26", "18:00", -6, "Estadio Akron", "Zapopan"], [65, "2026-06-26", "19:00", -5, "NRG Stadium", "Houston"]], "I": [[17, "2026-06-16", "15:00", -4, "MetLife Stadium", "East Rutherford"], [18, "2026-06-16", "18:00", -4, "Gillette Stadium", "Foxborough"], [42, "2026-06-22", "17:00", -4, "Lincoln Financial Field", "Filadélfia"], [41, "2026-06-22", "20:00", -4, "MetLife Stadium", "East Rutherford"], [61, "2026-06-26", "15:00", -4, "Gillette Stadium", "Foxborough"], [62, "2026-06-26", "15:00", -4, "BMO Field", "Toronto"]], "J": [[19, "2026-06-16", "20:00", -5, "Arrowhead Stadium", "Kansas City"], [20, "2026-06-16", "21:00", -7, "Levi's Stadium", "Santa Clara"], [43, "2026-06-22", "12:00", -5, "AT&T Stadium", "Arlington"], [44, "2026-06-22", "20:00", -7, "Levi's Stadium", "Santa Clara"], [70, "2026-06-27", "21:00", -5, "AT&T Stadium", "Arlington"], [69, "2026-06-27", "21:00", -5, "Arrowhead Stadium", "Kansas City"]], "K": [[23, "2026-06-17", "12:00", -5, "NRG Stadium", "Houston"], [24, "2026-06-17", "20:00", -6, "Estádio Azteca", "Cidade do México"], [47, "2026-06-23", "12:00", -5, "NRG Stadium", "Houston"], [48, "2026-06-23", "20:00", -6, "Estadio Akron", "Zapopan"], [71, "2026-06-27", "19:30", -4, "Hard Rock Stadium", "Miami Gardens"], [72, "2026-06-27", "19:30", -4, "Mercedes-Benz Stadium", "Atlanta"]], "L": [[21, "2026-06-17", "15:00", -5, "AT&T Stadium", "Arlington"], [22, "2026-06-17", "19:00", -4, "BMO Field", "Toronto"], [45, "2026-06-23", "16:00", -4, "Gillette Stadium", "Foxborough"], [46, "2026-06-23", "19:00", -4, "BMO Field", "Toronto"], [67, "2026-06-27", "17:00", -4, "MetLife Stadium", "East Rutherford"], [68, "2026-06-27", "17:00", -4, "Lincoln Financial Field", "Filadélfia"]]};
+const KO_INFO = {"73": ["2026-06-28", "12:00", -7, "SoFi Stadium", "Inglewood", "Dezesseis avos"], "74": ["2026-06-29", "12:00", -4, "Gillette Stadium", "Foxborough", "Dezesseis avos"], "75": ["2026-06-29", "16:30", -6, "Estádio BBVA", "Monterrey", "Dezesseis avos"], "76": ["2026-06-29", "19:00", -5, "NRG Stadium", "Houston", "Dezesseis avos"], "77": ["2026-06-30", "17:00", -4, "MetLife Stadium", "East Rutherford", "Dezesseis avos"], "78": ["2026-06-30", "12:00", -5, "AT&T Stadium", "Arlington", "Dezesseis avos"], "79": ["2026-06-30", "19:00", -6, "Estádio Azteca", "Cidade do México", "Dezesseis avos"], "80": ["2026-07-01", "12:00", -4, "Mercedes-Benz Stadium", "Atlanta", "Dezesseis avos"], "81": ["2026-07-01", "17:00", -7, "Levi's Stadium", "Santa Clara", "Dezesseis avos"], "82": ["2026-07-01", "13:00", -7, "Lumen Field", "Seattle", "Dezesseis avos"], "83": ["2026-07-02", "12:00", -4, "BMO Field", "Toronto", "Dezesseis avos"], "84": ["2026-07-02", "12:00", -7, "SoFi Stadium", "Inglewood", "Dezesseis avos"], "85": ["2026-07-02", "20:00", -7, "BC Place", "Vancouver", "Dezesseis avos"], "86": ["2026-07-03", "18:00", -4, "Hard Rock Stadium", "Miami", "Dezesseis avos"], "87": ["2026-07-03", "20:30", -5, "Arrowhead Stadium", "Kansas City", "Dezesseis avos"], "88": ["2026-07-03", "13:00", -5, "AT&T Stadium", "Arlington", "Dezesseis avos"], "89": ["2026-07-04", "17:00", -4, "Lincoln Financial Field", "Filadélfia", "Oitavas"], "90": ["2026-07-04", "12:00", -5, "NRG Stadium", "Houston", "Oitavas"], "91": ["2026-07-05", "16:00", -4, "MetLife Stadium", "East Rutherford", "Oitavas"], "92": ["2026-07-05", "18:00", -6, "Estádio Azteca", "Cidade do México", "Oitavas"], "93": ["2026-07-06", "14:00", -5, "AT&T Stadium", "Arlington", "Oitavas"], "94": ["2026-07-06", "17:00", -7, "Lumen Field", "Seattle", "Oitavas"], "95": ["2026-07-07", "12:00", -4, "Mercedes-Benz Stadium", "Atlanta", "Oitavas"], "96": ["2026-07-07", "13:00", -7, "BC Place", "Vancouver", "Oitavas"], "97": ["2026-07-09", "16:00", -4, "Gillette Stadium", "Foxborough", "Quartas"], "98": ["2026-07-10", "12:00", -7, "SoFi Stadium", "Inglewood", "Quartas"], "99": ["2026-07-11", "17:00", -4, "Hard Rock Stadium", "Miami", "Quartas"], "100": ["2026-07-11", "20:00", -5, "Arrowhead Stadium", "Kansas City", "Quartas"], "101": ["2026-07-14", "14:00", -5, "AT&T Stadium", "Arlington", "Semifinal"], "102": ["2026-07-15", "15:00", -4, "Mercedes-Benz Stadium", "Atlanta", "Semifinal"], "103": ["2026-07-18", "17:00", -5, "Hard Rock Stadium", "Miami", "3º lugar"], "104": ["2026-07-19", "15:00", -4, "MetLife Stadium", "East Rutherford", "Final"]};
 const STORE = "copa2026-dashboard-mobile-v2";
 
 function $(sel, root=document){ return root.querySelector(sel); }
@@ -1530,14 +1535,57 @@ function $$(sel, root=document){ return Array.from(root.querySelectorAll(sel)); 
 function esc(v){ return String(v ?? "").replace(/[&<>"']/g, s=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[s])); }
 
 let state = load();
+ensureState();
 function baseState(){
-  const s={groups:{}, ko:{}, real:""};
+  const s={groups:{}, ko:{}, real:"", broadcasts:{}};
   Object.keys(GROUPS).forEach(g=>{s.groups[g]=Array(6).fill(0).map(()=>({h:"",a:""}));});
   Object.keys(KO).forEach(id=>{s.ko[id]={home:"",away:"",h:"",a:"",ph:"",pa:""};});
   return s;
 }
 function load(){ try{ return JSON.parse(localStorage.getItem(STORE)) || baseState(); }catch(e){ return baseState(); } }
 function save(){ try{ localStorage.setItem(STORE, JSON.stringify(state)); }catch(e){} }
+
+function ensureState(){
+  const b=baseState();
+  if(!state.groups) state.groups=b.groups;
+  Object.keys(GROUPS).forEach(g=>{ if(!state.groups[g]) state.groups[g]=b.groups[g]; while(state.groups[g].length<6) state.groups[g].push({h:"",a:""}); });
+  if(!state.ko) state.ko=b.ko;
+  Object.keys(KO).forEach(id=>{ if(!state.ko[id]) state.ko[id]={home:"",away:"",h:"",a:"",ph:"",pa:""}; });
+  if(!state.broadcasts) state.broadcasts={};
+}
+function pad(n){return String(n).padStart(2,'0');}
+function fmtInfo(info){
+  const [no,date,time,off,stadium,city,phase]=info;
+  const [hh,mm]=time.split(':').map(Number);
+  const utcMs = Date.UTC(Number(date.slice(0,4)), Number(date.slice(5,7))-1, Number(date.slice(8,10)), hh-off, mm);
+  const localDate = new Date(Date.UTC(Number(date.slice(0,4)), Number(date.slice(5,7))-1, Number(date.slice(8,10)), 12, 0));
+  const br = new Date(utcMs - 3*3600*1000);
+  const wd=['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
+  const localDay = wd[localDate.getUTCDay()];
+  const brDay = wd[br.getUTCDay()];
+  const dloc = `${date.slice(8,10)}/${date.slice(5,7)}/${date.slice(0,4)}`;
+  const dbr = `${pad(br.getUTCDate())}/${pad(br.getUTCMonth()+1)}/${br.getUTCFullYear()}`;
+  return {no,date,time,off,stadium,city,phase,localDay,brDay,dloc,dbr,brTime:`${pad(br.getUTCHours())}:${pad(br.getUTCMinutes())}`};
+}
+function teamNamesFromMatch(m){ return [$('.team.home',m)?.textContent?.trim()||'', $('.team.away',m)?.textContent?.trim()||'']; }
+function defaultBroadcast(home,away){ return (home==='Brasil'||away==='Brasil') ? 'CazéTV/YouTube + Globo/Grupo Globo; confirmar canal exato' : 'CazéTV/YouTube; TV aberta/canais pagos: confirmar grade'; }
+function getBroadcast(no,home,away){ return state.broadcasts['M'+no] || defaultBroadcast(home,away); }
+function setBroadcast(no,val){ state.broadcasts['M'+no]=val; save(); $$(`.broadcast-input[data-matchno="${no}"]`).forEach(i=>{ if(i.value!==val) i.value=val; }); }
+function injectSchedule(){
+  $$('.match').forEach(m=>{
+    const g=m.dataset.group, idx=Number(m.dataset.match), info=MATCH_INFO[g]?.[idx]; if(!info) return;
+    const f=fmtInfo(info); m.dataset.matchno=f.no;
+    const [home,away]=teamNamesFromMatch(m);
+    if(!$('.match-meta',m)) m.insertAdjacentHTML('afterbegin', `<div class="match-meta"><b>Partida ${f.no}</b> • ${f.localDay}, ${f.dloc} • ${f.time} local (UTC${f.off>=0?'+':''}${f.off}) / ${f.brTime} Brasília<br><span>${esc(f.stadium)}, ${esc(f.city)}</span></div><label class="broadcast-line">📺 Onde passa:<input class="broadcast-input" data-matchno="${f.no}" value="${esc(getBroadcast(f.no,home,away))}"></label>`);
+    const bi=$('.broadcast-input',m); if(bi) bi.addEventListener('input',()=>setBroadcast(f.no,bi.value));
+  });
+  $$('.ko-match').forEach(card=>{
+    const id=card.dataset.ko, info=KO_INFO[id]; if(!info) return; const f=fmtInfo(info); card.dataset.matchno=f.no;
+    if(!$('.match-meta',card)) $('.ko-title',card).insertAdjacentHTML('afterend', `<div class="match-meta">${f.phase} • ${f.localDay}, ${f.dloc} • ${f.time} local (UTC${f.off>=0?'+':''}${f.off}) / ${f.brTime} Brasília<br><span>${esc(f.stadium)}, ${esc(f.city)}</span></div><label class="broadcast-line">📺 Onde passa:<input class="broadcast-input" data-matchno="${f.no}" value="${esc(getBroadcast(f.no,KO[id][0],KO[id][1]))}"></label>`);
+    const bi=$('.broadcast-input',card); if(bi) bi.addEventListener('input',()=>setBroadcast(f.no,bi.value));
+  });
+}
+
 
 function initTabs(){
   $$("button[data-tab]").forEach(b=>b.addEventListener("click",()=>{
@@ -1652,8 +1700,10 @@ function renderKO(){
   advance();
   $$(".ko-match").forEach(card=>{
     const id=card.dataset.ko, m=state.ko[id];
+    const tis=$$(".ko-team",card); if(tis[0]) tis[0].placeholder=KO[id][0]; if(tis[1]) tis[1].placeholder=KO[id][1];
     $$("input",card).forEach(inp=>{
       const f=inp.dataset.field;
+      if(!f) return;
       inp.value = m[f] ?? "";
       inp.oninput = ()=>{
         const val=inp.value;
@@ -1661,6 +1711,7 @@ function renderKO(){
         save(); renderKO();
       };
     });
+    const bi=$(`.broadcast-input[data-matchno="${id}"]`,card); if(bi){ bi.value=getBroadcast(id,m.home||KO[id][0],m.away||KO[id][1]); bi.oninput=()=>setBroadcast(id,bi.value); }
     const w=getWinner(id), out=$(".winner",card);
     out.textContent = w ? "Vencedor: "+w : "Sem vencedor definido";
     out.classList.toggle("oktxt", !!w);
@@ -1694,7 +1745,7 @@ function renderReal(){
 }
 
 document.addEventListener("DOMContentLoaded",()=>{
-  initTabs(); initGroupInputs(); initKO(); initReal(); renderTables(); renderKO();
+  initTabs(); injectSchedule(); initGroupInputs(); initKO(); initReal(); renderTables(); renderKO();
 });
 </script>
 <noscript>
